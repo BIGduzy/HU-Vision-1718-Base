@@ -9,24 +9,41 @@
 #include "HereBeDragons.h"
 #include "ImageFactory.h"
 #include "DLLExecution.h"
+#include <chrono>
 
 void drawFeatureDebugImage(IntensityImage &image, FeatureMap &features);
 bool executeSteps(DLLExecution * executor);
 
+struct Timer {
+	std::chrono::time_point<std::chrono::steady_clock> start;
+	std::chrono::duration<float> duration;
+	float& totalTime;
+	uint32_t& totalTimers;
+
+	Timer(float& totalTime, uint32_t& totalTimers): totalTime(totalTime), totalTimers(totalTimers) {
+		start = std::chrono::high_resolution_clock::now();
+	}
+
+	~Timer() {
+		duration = std::chrono::high_resolution_clock::now() - start;
+		totalTime += duration.count() * 1000;
+		++totalTimers;
+	}
+};
+
 int main(int argc, char * argv[]) {
+	//ImageFactory::setImplementation(ImageFactory::DEFAULT);
+	ImageFactory::setImplementation(ImageFactory::STUDENT);
 
-	ImageFactory::setImplementation(ImageFactory::DEFAULT);
-	//ImageFactory::setImplementation(ImageFactory::STUDENT);
 
-
-	ImageIO::debugFolder = "D:\\Users\\Rolf\\Downloads\\FaceMinMin";
+	ImageIO::debugFolder = "D:\\tmp";
 	ImageIO::isInDebugMode = true; //If set to false the ImageIO class will skip any image save function calls
 
 
 
 
 	RGBImage * input = ImageFactory::newRGBImage();
-	if (!ImageIO::loadImage("D:\\Users\\Rolf\\Downloads\\TestA5.jpg", *input)) {
+	if (!ImageIO::loadImage("D:\\tmp\\plaatjes\\male-3.png", *input)) {
 		std::cout << "Image could not be loaded!" << std::endl;
 		system("pause");
 		return 0;
@@ -37,12 +54,11 @@ int main(int argc, char * argv[]) {
 
 	DLLExecution * executor = new DLLExecution(input);
 
-
 	if (executeSteps(executor)) {
 		std::cout << "Face recognition successful!" << std::endl;
 		std::cout << "Facial parameters: " << std::endl;
 		for (int i = 0; i < 16; i++) {
-			std::cout << (i+1) << ": " << executor->facialParameters[i] << std::endl;
+			std::cout << (i + 1) << ": " << executor->facialParameters[i] << std::endl;
 		}
 	}
 
@@ -61,12 +77,21 @@ int main(int argc, char * argv[]) {
 
 
 bool executeSteps(DLLExecution * executor) {
-
-	//Execute the four Pre-processing steps
-	if (!executor->executePreProcessingStep1(false)) {
-		std::cout << "Pre-processing step 1 failed!" << std::endl;
-		return false;
+	for (size_t i = 0 ; i < 4; ++i) {
+		float totalTime = 0;
+		uint32_t totalTimers = 0;
+		//Execute the four Pre-processing steps
+		for (size_t i = 0; i < 1000; ++i) {
+			Timer timer(totalTime, totalTimers);
+			if (!executor->executePreProcessingStep1(true)) {
+				std::cout << "Pre-processing step 1 failed!" << std::endl;
+				return false;
+			}
+		}
+		std::cout << "Avg duration: " << totalTime / totalTimers << "ms" << std::endl;
 	}
+
+
 
 	if (!executor->executePreProcessingStep2(false)) {
 		std::cout << "Pre-processing step 2 failed!" << std::endl;
