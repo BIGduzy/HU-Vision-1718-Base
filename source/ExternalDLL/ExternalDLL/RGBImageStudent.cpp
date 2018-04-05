@@ -5,36 +5,30 @@ RGBImageStudent::RGBImageStudent() : RGBImage() {}
 RGBImageStudent::RGBImageStudent(const RGBImageStudent &other):
 	RGBImage(other.getWidth(), other.getHeight()),
 	pixels(other.pixels)
-{}
+{
+	for (int i = 0; i<getWidth()*getHeight(); ++i) {
+		pixels[i] = other.pixels[i];
+	}
+}
 
 
-RGBImageStudent::RGBImageStudent(const int width, const int height): RGBImage(width, height) {
-	pixels.resize(width * height);
+RGBImageStudent::RGBImageStudent(const int width, const int height): RGBImage(width, height),
+pixels(width*height){
 }
 
 RGBImageStudent::~RGBImageStudent() {
 }
 
 void RGBImageStudent::set(const int width, const int height) {
-	if (pixels.size() != 0) {
-		std::vector<RGB> tmpPixels(getWidth() * getHeight());
-		const int scaleX = getWidth() / width;
-		const int scaleY = getHeight() / height;
-
-		for (int y = 0; y < height; ++y) {
-			for (int x = 0; x < width; ++x) {
-				tmpPixels[y * width + x] = pixels[y * scaleY * getWidth() + x * scaleX];
-			}
-		}
-		pixels = tmpPixels;
-	} else {
-		pixels.resize(width * height);
-	}
 	RGBImage::set(width, height);
+	pixels.resize(width * height);
 }
 
 void RGBImageStudent::set(const RGBImageStudent &other) {
 	set(other.getWidth(), other.getHeight());
+	for (int i = 0; i < other.getWidth() * other.getHeight(); ++i) {
+		pixels[i] = other.pixels[i];
+	}
 }
 
 void RGBImageStudent::setPixel(int x, int y, RGB pixel) {

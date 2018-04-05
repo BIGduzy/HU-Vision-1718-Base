@@ -46,18 +46,27 @@ IntensityImage * ImageFactory::ImplementationPrivate::newIntensityImage() const 
 
 //Static factory methods
 RGBImage * ImageFactory::newRGBImage(const int width, const int height) {
+	// NOTE: getImplementation does not work on release build so we use this
+	//return new RGBImageStudent(width, height);
 	return getImplementation()->newRGBImage(width, height);
 }
 
 IntensityImage * ImageFactory::newIntensityImage(const int width, const int height) {
+	// NOTE: getImplementation does not work on release build so we use this
+	//return new IntensityImageStudent(width, height);
 	return getImplementation()->newIntensityImage(width, height);
 }
 
 RGBImage * ImageFactory::newRGBImage() {
+	// NOTE: getImplementation does not work on release build so we use this
+	//return new RGBImageStudent();
 	return getImplementation()->newRGBImage();
 }
 
+#include <iostream>
 IntensityImage * ImageFactory::newIntensityImage() {
+	// NOTE: getImplementation does not work on release build so we use this
+	//return new IntensityImageStudent();
 	return getImplementation()->newIntensityImage();
 }
 
@@ -96,7 +105,7 @@ void ImageFactory::setImplementation(ImageFactory::Implementation &implementatio
 }
 
 ImageFactory::Implementation * ImageFactory::getImplementation() {
-	if (!implementation) {
+	if (implementation == nullptr) {
 		throw new std::invalid_argument("The factory methods can not be used because the current Implementation is null!");
 	}
 	return implementation;

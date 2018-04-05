@@ -32,8 +32,8 @@ struct Timer {
 };
 
 int main(int argc, char * argv[]) {
-	//ImageFactory::setImplementation(ImageFactory::DEFAULT);
-	ImageFactory::setImplementation(ImageFactory::STUDENT);
+	ImageFactory::setImplementation(ImageFactory::DEFAULT);
+	//ImageFactory::setImplementation(ImageFactory::STUDENT);
 
 
 	ImageIO::debugFolder = "D:\\tmp";
@@ -77,19 +77,17 @@ int main(int argc, char * argv[]) {
 
 
 bool executeSteps(DLLExecution * executor) {
-	for (size_t i = 0 ; i < 4; ++i) {
-		float totalTime = 0;
-		uint32_t totalTimers = 0;
-		//Execute the four Pre-processing steps
-		for (size_t i = 0; i < 1000; ++i) {
-			Timer timer(totalTime, totalTimers);
-			if (!executor->executePreProcessingStep1(true)) {
-				std::cout << "Pre-processing step 1 failed!" << std::endl;
-				return false;
-			}
+	float totalTime = 0;
+	uint32_t totalTimers = 0;
+	//Execute the four Pre-processing steps
+	for (size_t i = 0; i < 1'000; ++i) {
+		Timer timer(totalTime, totalTimers);
+		if (!executor->executePreProcessingStep1(false)) {
+			std::cout << "Pre-processing step 1 failed!" << std::endl;
+			return false;
 		}
-		std::cout << "Avg duration: " << totalTime / totalTimers << "ms" << std::endl;
 	}
+	std::cout << "Avg duration: " << totalTime / totalTimers << "ms" << std::endl;
 
 
 
